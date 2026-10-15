@@ -8,6 +8,9 @@ struct MemoryVaultApp: App {
     @Environment(\.scenePhase) private var scenePhase
 
     private let container: ModelContainer = {
+        // SwiftData stores in Application Support, which doesn't exist on a fresh install.
+        // Creating it up front avoids a burst of harmless "Failed to stat path" CoreData errors.
+        try? FileManager.default.createDirectory(at: .applicationSupportDirectory, withIntermediateDirectories: true)
         do {
             return try ModelContainer(for: Memory.self, Person.self)
         } catch {
